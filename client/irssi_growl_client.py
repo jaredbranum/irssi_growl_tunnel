@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os, re
 from urlparse import parse_qs
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from gntp import notifier
@@ -14,6 +15,8 @@ class IrssiListener(BaseHTTPRequestHandler):
 
 class IrssiGrowler:
     def __init__(self):
+        iconPath = re.sub(r'[^\/]+$', "icon.png", os.path.abspath(__file__))
+        self.icon = open(iconPath).read()
         self.growl = notifier.GrowlNotifier(
             applicationName = "Irssi Growl Tunnel",
             notifications = [ "Channel Messages",
@@ -27,7 +30,7 @@ class IrssiGrowler:
             noteType = alertType,
             title = title,
             description = message,
-            icon = "./irssi-icon.png",
+            icon = self.icon,
             sticky = sticky,
             priority = 1
         )
