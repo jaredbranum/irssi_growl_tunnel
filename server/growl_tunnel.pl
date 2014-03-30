@@ -6,7 +6,7 @@ use Irssi;
 use URI::Escape;
 
 use vars qw($VERSION %IRSSI);
-$VERSION = '1.0';
+$VERSION = '1.1';
 %IRSSI = (
   authors     => 'Jared Branum',
   contact     => 'jared.branum@gmail.com',
@@ -37,9 +37,11 @@ sub tunnel_growl {
   my ($title, $msg) = @_;
   my ($encoded_title, $encoded_msg) = (uri_escape($title), uri_escape($msg));
   my $params = "title=$encoded_title&message=$encoded_msg";
+  my $port = Irssi::settings_get_int('growl_tunnel_port');
   $params =~ s/\"/\\\"/g;
-  system "curl -s -d \"$params\" http://localhost:55573"
+  system "curl -s -d \"$params\" http://localhost:$port"
 }
 
+Irssi::settings_add_int($IRSSI{'name'}, 'growl_tunnel_port', 55573);
 Irssi::signal_add_last("message private", "privmsg");
 Irssi::signal_add_last("print text", "highlight");

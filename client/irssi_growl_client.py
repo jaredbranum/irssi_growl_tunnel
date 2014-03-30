@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-import os, re
+import os, re, sys
 from urlparse import parse_qs
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from gntp import notifier
 
 class IrssiListener(BaseHTTPRequestHandler):
+
+    PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 55573
+
     def do_POST(self):
         length = int(self.headers.getheader('Content-Length'))
         args = parse_qs(self.rfile.read(length))
@@ -37,5 +40,5 @@ class IrssiGrowler:
 
 if __name__ == '__main__':
     growler = IrssiGrowler()
-    server = HTTPServer(('localhost', 55573), IrssiListener)
+    server = HTTPServer(('localhost', IrssiListener.PORT), IrssiListener)
     server.serve_forever()
